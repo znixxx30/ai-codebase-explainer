@@ -6,6 +6,7 @@ function App() {
   const [repoUrl, setRepoUrl] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [sources, setSources] = useState([]);
   const [status, setStatus] = useState("");
 
   const indexRepository = async () => {
@@ -37,6 +38,7 @@ function App() {
     const data = await response.json();
 
     setAnswer(data.answer);
+    setSources(data.sources || []);
   };
 
   return (
@@ -69,6 +71,13 @@ function App() {
 
       <h3>AI Answer</h3>
       <p>{answer}</p>
+
+      <h3>Sources</h3>
+      <ul>
+        {sources.map((src, index) => (
+          <li key={index}>{src}</li>
+        ))}
+      </ul>
     </div>
   );
 }

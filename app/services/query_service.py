@@ -19,6 +19,10 @@ class QueryService:
             [doc.page_content for doc in results]
         )
 
+        sources = list(set(
+            [doc.metadata["path"] for doc in results]
+        ))
+
         prompt = f"""
 You are an expert software engineer.
 
@@ -35,4 +39,7 @@ Explain clearly and mention file paths if relevant.
 
         response = self.model.generate_content(prompt)
 
-        return response.text
+        return {
+            "answer": response.text,
+            "sources": sources
+        }

@@ -52,6 +52,6 @@ def ask_question(request: QuestionRequest):
     if query_service is None:
         return {"error": "Repository not indexed yet"}
 
-    answer = query_service.ask_question(request.question)
+    result = query_service.ask_question(request.question)
 
-    return {"answer": answer}
+    return result
