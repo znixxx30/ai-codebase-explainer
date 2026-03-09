@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import "./App.css";
 
 const API_URL = "http://127.0.0.1:8000";
 
@@ -8,6 +9,17 @@ function App() {
   const [question, setQuestion] = useState("");
   const [chat, setChat] = useState([]);
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const chatEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chat]);
 
   const indexRepository = async () => {
     setStatus("Indexing repository...");
@@ -32,8 +44,8 @@ function App() {
     };
 
     setChat(prev => [...prev, userMessage]);
-
     setQuestion("");
+    setLoading(true);
 
     const response = await fetch(`${API_URL}/ask`, {
       method: "POST",
@@ -55,91 +67,90 @@ function App() {
     };
 
     setChat(prev => [...prev, aiMessage]);
+    setLoading(false);
   };
 
   return (
-    <div style={{ padding: 40, fontFamily: "Arial" }}>
+    <div className="app-container">
 
-      <h1>AI Codebase Explainer</h1>
+      <header className="header">
+        AI Codebase Explainer
+      </header>
 
-      <h3>1. Index Repository</h3>
+      <div className="repo-section">
+        <input
+          placeholder="Enter GitHub repository URL"
+          value={repoUrl}
+          onChange={(e) => setRepoUrl(e.target.value)}
+        />
 
-      <input
-        style={{ width: "400px" }}
-        placeholder="Enter GitHub repository URL"
-        value={repoUrl}
-        onChange={(e) => setRepoUrl(e.target.value)}
-      />
+        <button onClick={indexRepository}>
+          Index Repository
+        </button>
 
-      <button onClick={indexRepository}>
-        Index Repository
-      </button>
+        <p className="status">{status}</p>
+      </div>
 
-      <p>{status}</p>
-
-      <h3>2. Ask Question</h3>
-
-      <input
-        style={{ width: "400px" }}
-        placeholder="Ask a question about the repository"
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-      />
-
-      <button onClick={askQuestion}>
-        Ask
-      </button>
-
-      <h3>Conversation</h3>
-
-      <div style={{ marginTop: 20 }}>
+      <div className="chat-window">
 
         {chat.map((msg, index) => (
 
-          <div key={index} style={{ marginBottom: 20 }}>
+          <div
+            key={index}
+            className={msg.role === "user" ? "chat-bubble user" : "chat-bubble ai"}
+          >
 
-            <b>{msg.role === "user" ? "User" : "AI"}:</b>
-
-            <p>{msg.text}</p>
+            <div className="message-text">
+              {msg.text}
+            </div>
 
             {msg.sources && msg.sources.length > 0 && (
-
-              <div>
-
-                <b>Sources:</b>
-
+              <div className="sources">
+                <b>Sources</b>
                 <ul>
                   {msg.sources.map((src, i) => (
                     <li key={i}>{src}</li>
                   ))}
                 </ul>
-
               </div>
             )}
 
             {msg.snippets && msg.snippets.length > 0 && (
-              <div>
-                <b>Code Snippets:</b>
+              <div className="snippets">
+                <b>Code Snippets</b>
                 {msg.snippets.map((code, i) => (
-                  <pre
-                    key={i}
-                    style={{
-                      background: "#f5f5f5",
-                      padding: "10px",
-                      borderRadius: "6px",
-                      overflowX: "auto"
-                    }}
-                  >
+                  <pre key={i}>
                     <code>{code}</code>
                   </pre>
                 ))}
               </div>
             )}
 
-
           </div>
 
         ))}
+
+        {loading && (
+          <div className="chat-bubble ai">
+            AI is thinking...
+          </div>
+        )}
+
+        <div ref={chatEndRef} />
+
+      </div>
+
+      <div className="input-area">
+
+        <input
+          placeholder="Ask a question about the repository..."
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+        />
+
+        <button onClick={askQuestion}>
+          Send
+        </button>
 
       </div>
 
