@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 
 from app.services.repo_service import RepoService
 from app.services.parser_service import ParserService
@@ -41,12 +42,16 @@ def index_repo(repo_url: str):
 
     return {"status": "repository indexed"}
 
+class QuestionRequest(BaseModel):
+    question: str
+
+
 @router.post("/ask")
-def ask_question(question: str):
+def ask_question(request: QuestionRequest):
 
     if query_service is None:
         return {"error": "Repository not indexed yet"}
 
-    answer = query_service.ask_question(question)
+    answer = query_service.ask_question(request.question)
 
     return {"answer": answer}
