@@ -1,4 +1,10 @@
 # AI Codebase Explainer
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-green)
+![React](https://img.shields.io/badge/React-frontend-blue)
+![FAISS](https://img.shields.io/badge/VectorDB-FAISS-orange)
+![Gemini](https://img.shields.io/badge/LLM-Google%20Gemini-purple)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
 An AI-powered developer assistant that analyzes GitHub repositories and answers questions about the codebase using **Retrieval-Augmented Generation (RAG)**.
 
@@ -221,6 +227,13 @@ npm start
 ```
 
 ---
+## Screenshots
+
+### Chat Interface
+![Chat](screenshots/chat.png)
+
+### AI Answer with Sources
+![Response](screenshots/response.png)
 
 ## Future Improvements
 
