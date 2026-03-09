@@ -24,35 +24,45 @@ class QueryService:
             [doc.metadata["path"] for doc in results]
         ))
 
+        snippets = [
+            doc.page_content[:500] for doc in results
+        ]
+
         history_text = "\n".join(
             [f"{msg['role']}: {msg['content']}" for msg in self.chat_history]
         )
 
         prompt = f"""
-You are an expert software engineer.
+    You are an expert software engineer helping understand a codebase.
 
-Use the following code context to answer the question.
+    Previous conversation:
+    {history_text}
 
-Previous conversation:
-{history_text}
+    CODE CONTEXT:
+    {context}
 
-CODE CONTEXT:
-{context}
+    User question:
+    {question}
 
-QUESTION:
-{question}
-
-Explain clearly and mention file paths if relevant.
-"""
+    Answer clearly and reference file paths if relevant.
+    """
 
         response = self.model.generate_content(prompt)
 
         answer = response.text
 
-        self.chat_history.append({"role": "user", "content": question})
-        self.chat_history.append({"role": "assistant", "content": answer})
+        self.chat_history.append({
+            "role": "user",
+            "content": question
+        })
+
+        self.chat_history.append({
+            "role": "assistant",
+            "content": answer
+        })
 
         return {
             "answer": answer,
-            "sources": sources
+            "sources": sources,
+            "snippets": snippets
         }

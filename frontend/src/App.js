@@ -50,7 +50,8 @@ function App() {
     const aiMessage = {
       role: "assistant",
       text: data.answer,
-      sources: data.sources || []
+      sources: data.sources || [],
+      snippets: data.snippets || []
     };
 
     setChat(prev => [...prev, aiMessage]);
@@ -102,6 +103,7 @@ function App() {
             <p>{msg.text}</p>
 
             {msg.sources && msg.sources.length > 0 && (
+
               <div>
 
                 <b>Sources:</b>
@@ -114,6 +116,26 @@ function App() {
 
               </div>
             )}
+
+            {msg.snippets && msg.snippets.length > 0 && (
+              <div>
+                <b>Code Snippets:</b>
+                {msg.snippets.map((code, i) => (
+                  <pre
+                    key={i}
+                    style={{
+                      background: "#f5f5f5",
+                      padding: "10px",
+                      borderRadius: "6px",
+                      overflowX: "auto"
+                    }}
+                  >
+                    <code>{code}</code>
+                  </pre>
+                ))}
+              </div>
+            )}
+
 
           </div>
 
