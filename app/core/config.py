@@ -6,7 +6,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
 
-    OPENAI_API_KEY: str | None = None
+    GEMINI_API_KEY: str | None = None
 
     REPO_STORAGE: str = "repos"
 

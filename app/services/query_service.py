@@ -1,14 +1,18 @@
-import ollama
+import google.generativeai as genai
+from app.core.config import settings
+
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
 class QueryService:
 
     def __init__(self, vector_store):
         self.vector_store = vector_store
+        self.model = genai.GenerativeModel("gemini-2.5-flash")
 
     def ask_question(self, question):
 
-        # Retrieve relevant code chunks
         results = self.vector_store.similarity_search(question)
 
         context = "\n\n".join(
@@ -18,7 +22,7 @@ class QueryService:
         prompt = f"""
 You are an expert software engineer.
 
-Use the provided code context to answer the question.
+Use the following code context to answer the question.
 
 CODE CONTEXT:
 {context}
@@ -26,12 +30,9 @@ CODE CONTEXT:
 QUESTION:
 {question}
 
-Provide a clear explanation and mention file paths if possible.
+Explain clearly and mention file paths if relevant.
 """
 
-        response = ollama.chat(
-            model="phi3",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        response = self.model.generate_content(prompt)
 
-        return response["message"]["content"]
+        return response.text
