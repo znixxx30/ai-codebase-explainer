@@ -25,7 +25,7 @@ class QueryService:
         ))
 
         snippets = [
-            doc.page_content[:500] for doc in results
+            doc.page_content[:500] for doc in results[:3]
         ]
 
         history_text = "\n".join(
