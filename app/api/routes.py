@@ -40,7 +40,7 @@ def index_repo(repo_url: str):
 
     query_service = QueryService(vector_store)
 
-    return {"status": "repository indexed"}
+    return {"status": "repository indexed and saved"}
 
 class QuestionRequest(BaseModel):
     question: str
