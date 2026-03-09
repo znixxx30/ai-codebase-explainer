@@ -3,10 +3,10 @@ import { useState } from "react";
 const API_URL = "http://127.0.0.1:8000";
 
 function App() {
+
   const [repoUrl, setRepoUrl] = useState("");
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState([]);
+  const [chat, setChat] = useState([]);
   const [status, setStatus] = useState("");
 
   const indexRepository = async () => {
@@ -23,7 +23,17 @@ function App() {
   };
 
   const askQuestion = async () => {
-    setAnswer("Thinking...");
+
+    if (!question.trim()) return;
+
+    const userMessage = {
+      role: "user",
+      text: question
+    };
+
+    setChat(prev => [...prev, userMessage]);
+
+    setQuestion("");
 
     const response = await fetch(`${API_URL}/ask`, {
       method: "POST",
@@ -31,18 +41,24 @@ function App() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        question: question
+        question: userMessage.text
       })
     });
 
     const data = await response.json();
 
-    setAnswer(data.answer);
-    setSources(data.sources || []);
+    const aiMessage = {
+      role: "assistant",
+      text: data.answer,
+      sources: data.sources || []
+    };
+
+    setChat(prev => [...prev, aiMessage]);
   };
 
   return (
     <div style={{ padding: 40, fontFamily: "Arial" }}>
+
       <h1>AI Codebase Explainer</h1>
 
       <h3>1. Index Repository</h3>
@@ -54,7 +70,9 @@ function App() {
         onChange={(e) => setRepoUrl(e.target.value)}
       />
 
-      <button onClick={indexRepository}>Index Repository</button>
+      <button onClick={indexRepository}>
+        Index Repository
+      </button>
 
       <p>{status}</p>
 
@@ -67,17 +85,42 @@ function App() {
         onChange={(e) => setQuestion(e.target.value)}
       />
 
-      <button onClick={askQuestion}>Ask</button>
+      <button onClick={askQuestion}>
+        Ask
+      </button>
 
-      <h3>AI Answer</h3>
-      <p>{answer}</p>
+      <h3>Conversation</h3>
 
-      <h3>Sources</h3>
-      <ul>
-        {sources.map((src, index) => (
-          <li key={index}>{src}</li>
+      <div style={{ marginTop: 20 }}>
+
+        {chat.map((msg, index) => (
+
+          <div key={index} style={{ marginBottom: 20 }}>
+
+            <b>{msg.role === "user" ? "User" : "AI"}:</b>
+
+            <p>{msg.text}</p>
+
+            {msg.sources && msg.sources.length > 0 && (
+              <div>
+
+                <b>Sources:</b>
+
+                <ul>
+                  {msg.sources.map((src, i) => (
+                    <li key={i}>{src}</li>
+                  ))}
+                </ul>
+
+              </div>
+            )}
+
+          </div>
+
         ))}
-      </ul>
+
+      </div>
+
     </div>
   );
 }
