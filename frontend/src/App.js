@@ -93,6 +93,22 @@ function App() {
 
       <div className="chat-window">
 
+        {chat.length === 0 && !loading && (
+          <div className="cube-scene">
+            <div className="orbit">
+              <div className="cube">
+                <div className="face front" />
+                <div className="face back" />
+                <div className="face left" />
+                <div className="face right" />
+                <div className="face top" />
+                <div className="face bottom" />
+              </div>
+            </div>
+            <p className="cube-hint">Index a repo and ask anything about the code</p>
+          </div>
+        )}
+
         {chat.map((msg, index) => (
 
           <div

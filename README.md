@@ -230,6 +230,7 @@ npm start
 ## Screenshots
 
 ### Chat Interface
+![Dashboard](screenshots/dashboard.png)
 ![Chat](screenshots/chat.png)
 
 ### AI Answer with Sources
