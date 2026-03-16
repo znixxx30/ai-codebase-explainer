@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
-const API_URL = "http://18.234.220.50:8000";;
+const API_URL = "https://unanemic-sulphonic-arlo.ngrok-free.dev";;
 
 function App() {
 
